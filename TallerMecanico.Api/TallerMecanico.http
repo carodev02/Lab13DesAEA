@@ -1,0 +1,84 @@
+@baseUrl = https://localhost:7163
+@clienteId = 1
+@ordenId = 1
+
+### Clientes: lista (200)
+GET {{baseUrl}}/api/clientes
+
+### Clientes: detalle (200)
+GET {{baseUrl}}/api/clientes/{{clienteId}}
+
+### Clientes: órdenes asociadas (200)
+GET {{baseUrl}}/api/clientes/{{clienteId}}/ordenes
+
+### Clientes: alta (201 + Location)
+POST {{baseUrl}}/api/clientes
+Content-Type: application/json
+
+{ "nombre": "Ana Torres", "telefono": "999111222" }
+
+### Clientes: validación (400)
+POST {{baseUrl}}/api/clientes
+Content-Type: application/json
+
+{ "nombre": "", "telefono": "1" }
+
+### Clientes: edición (204)
+PUT {{baseUrl}}/api/clientes/{{clienteId}}
+Content-Type: application/json
+
+{ "nombre": "María Quispe Rojas", "telefono": "987654321" }
+
+### Clientes: bloqueo de borrado por órdenes (409)
+DELETE {{baseUrl}}/api/clientes/{{clienteId}}
+
+### Clientes: borrado permitido sin órdenes (204)
+DELETE {{baseUrl}}/api/clientes/3
+
+### Clientes: inexistente (404)
+GET {{baseUrl}}/api/clientes/99999
+
+### Órdenes: lista (200)
+GET {{baseUrl}}/api/ordenesservicio
+
+### Órdenes: filtro por estado (200)
+GET {{baseUrl}}/api/ordenesservicio?estado=Pendiente
+
+### Órdenes: detalle (200)
+GET {{baseUrl}}/api/ordenesservicio/{{ordenId}}
+
+### Órdenes: alta (201 + Location)
+POST {{baseUrl}}/api/ordenesservicio
+Content-Type: application/json
+
+{ "placa": "GHT-234", "descripcionTrabajo": "Cambio de aceite y filtro", "fechaIngreso": "2026-11-11", "estado": "Pendiente", "clienteId": 2 }
+
+### Órdenes: placa con trabajo pendiente (409)
+POST {{baseUrl}}/api/ordenesservicio
+Content-Type: application/json
+
+{ "placa": "ABC-123", "descripcionTrabajo": "Revisión de frenos", "fechaIngreso": "2026-11-11", "estado": "Pendiente", "clienteId": 2 }
+
+### Órdenes: cliente inexistente (404)
+POST {{baseUrl}}/api/ordenesservicio
+Content-Type: application/json
+
+{ "placa": "ZZZ-999", "descripcionTrabajo": "Revisión general", "fechaIngreso": "2026-11-11", "estado": "Pendiente", "clienteId": 99999 }
+
+### Órdenes: validación (400)
+POST {{baseUrl}}/api/ordenesservicio
+Content-Type: application/json
+
+{ "placa": "", "descripcionTrabajo": "", "fechaIngreso": "2026-11-11", "estado": "Pendiente", "clienteId": 0 }
+
+### Órdenes: edición (204)
+PUT {{baseUrl}}/api/ordenesservicio/{{ordenId}}
+Content-Type: application/json
+
+{ "placa": "ABC-123", "descripcionTrabajo": "Cambio de aceite y filtro premium", "fechaIngreso": "2026-11-10", "estado": "En proceso", "clienteId": 1 }
+
+### Órdenes: borrado (204) - usar el id de la orden recién creada
+DELETE {{baseUrl}}/api/ordenesservicio/4
+
+### Órdenes: inexistente (404)
+GET {{baseUrl}}/api/ordenesservicio/99999

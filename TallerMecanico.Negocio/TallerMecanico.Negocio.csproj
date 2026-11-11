@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="16.3.0" />
+    <ProjectReference Include="..\TallerMecanico.Datos\TallerMecanico.Datos.csproj" />
+    <ProjectReference Include="..\TallerMecanico.Entidades\TallerMecanico.Entidades.csproj" />
+  </ItemGroup>
+
+</Project>

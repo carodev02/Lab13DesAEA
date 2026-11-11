@@ -1,0 +1,11 @@
+**/bin/
+**/obj/
+**/buildcheck/
+.vs/
+.vscode/
+*.user
+*.suo
+appsettings.*.json
+!.config/appsettings.template.json
+TestResults/
+*.log

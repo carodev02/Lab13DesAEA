@@ -1,0 +1,22 @@
+PASS GET clientes 200
+PASS GET cliente detalle 200
+PASS GET ordenes anidadas 200
+PASS POST cliente 201 Location=http://127.0.0.1:5273/api/Clientes/4
+PASS POST cliente inválido 400
+PASS PUT cliente 204
+PASS DELETE cliente con órdenes 409
+PASS DELETE cliente sin órdenes 204
+PASS GET cliente inexistente 404
+PASS GET ordenes 200
+PASS GET ordenes filtradas 200
+PASS GET orden detalle 200
+PASS POST orden 201 Location=http://127.0.0.1:5273/api/OrdenesServicio/4
+PASS POST placa pendiente duplicada 409
+PASS POST orden inválida 400
+PASS POST orden cliente inexistente 404
+PASS PUT orden 204
+PASS DELETE orden 204
+PASS GET orden inexistente 404
+PASS Swagger UI 200
+PASS OpenAPI JSON 200
+PASS Swagger shows six DTO schemas and no entities
