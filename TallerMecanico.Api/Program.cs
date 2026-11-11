@@ -19,7 +19,13 @@ builder.Services.AddScoped<IOrdenServicioServicio, OrdenServicioServicio>();
 
 var app = builder.Build();
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(options =>
+{
+    // Mantiene la documentación contraída al abrirla para que el navegador
+    // no tenga que renderizar todos los esquemas de respuesta de inmediato.
+    options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
+    options.DisplayRequestDuration();
+});
 app.UseHttpsRedirection();
 app.MapControllers();
 app.Run();
