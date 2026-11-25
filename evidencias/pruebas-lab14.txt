@@ -1,0 +1,63 @@
+Laboratorio 14 - registro de pruebas
+Fecha: 25/11/2026
+Solución: TallerMecanico, .NET 10
+Base usada: SQL Server LocalDB (TallerMecanico)
+
+Compilación:
+  dotnet build .\TallerMecanico.slnx --no-restore -m:1
+  Resultado: correcta; 0 advertencias y 0 errores.
+
+Se ejecutaron 42 solicitudes HTTP locales. Se crearon tres cuentas temporales por la API,
+se asignaron roles en la base para comprobar permisos y se borraron al terminar.
+Las contraseñas temporales se generaron en memoria y no se guardaron en el repositorio.
+
+| # | Caso ejecutado | HTTP |
+|---:|---|---:|
+| 1 | Swagger OpenAPI publica esquema Bearer | 200 |
+| 2 | Registro temporal como Cliente | 201 |
+| 3 | Registro temporal antes de asignar rol Recepcionista | 201 |
+| 4 | Registro temporal antes de asignar rol Mecanico | 201 |
+| 5 | Registro con correo duplicado | 409 |
+| 6 | Login con clave incorrecta | 401 |
+| 7 | Login con correo inexistente; mismo cuerpo que el caso anterior | 401 |
+| 8 | Login con DTO inválido | 400 |
+| 9 | Login como Cliente | 200 |
+| 10 | Login como Recepcionista | 200 |
+| 11 | Login como Mecanico | 200 |
+| 12 | Consultar perfil desde los claims | 200 |
+| 13 | Consultar perfil sin token | 401 |
+| 14 | Consultar clientes sin token | 401 |
+| 15 | Cliente intenta listar clientes | 403 |
+| 16 | Mecanico intenta crear una orden | 403 |
+| 17 | Listar clientes como Recepcionista | 200 |
+| 18 | Obtener cliente existente | 200 |
+| 19 | Obtener cliente inexistente | 404 |
+| 20 | Obtener órdenes anidadas de un cliente | 200 |
+| 21 | Obtener órdenes anidadas para cliente inexistente | 404 |
+| 22 | Crear cliente con DTO inválido | 400 |
+| 23 | Mecanico intenta crear cliente | 403 |
+| 24 | Crear cliente; se comprobó cabecera `Location` | 201 |
+| 25 | Actualizar cliente | 204 |
+| 26 | Borrar cliente que tiene órdenes | 409 |
+| 27 | Borrar cliente temporal sin órdenes | 204 |
+| 28 | Consultar el cliente borrado | 404 |
+| 29 | Borrar cliente inexistente | 404 |
+| 30 | Actualizar cliente inexistente | 404 |
+| 31 | Listar órdenes como Mecanico | 200 |
+| 32 | Filtrar órdenes por estado | 200 |
+| 33 | Obtener orden existente | 200 |
+| 34 | Obtener orden inexistente | 404 |
+| 35 | Crear orden con DTO inválido | 400 |
+| 36 | Crear orden con ClienteId inexistente | 404 |
+| 37 | Crear orden; se comprobó cabecera `Location` | 201 |
+| 38 | Crear segunda orden Pendiente para la misma placa | 409 |
+| 39 | Actualizar orden como Mecanico | 204 |
+| 40 | Actualizar orden inexistente | 404 |
+| 41 | Borrar orden temporal como Mecanico | 204 |
+| 42 | Borrar orden inexistente | 404 |
+
+Conteo: 200 x 11, 201 x 5, 204 x 4, 400 x 3, 401 x 4, 403 x 3, 404 x 9 y 409 x 3.
+Los 201 de cliente y orden incluyeron `Location`; el registro devuelve el DTO sin esa cabecera.
+
+No se incluyeron capturas gráficas; deben tomarse desde Swagger o la ventana HTTP de Visual Studio
+en el equipo de entrega. No se registran pruebas distintas de las 42 solicitudes anteriores.

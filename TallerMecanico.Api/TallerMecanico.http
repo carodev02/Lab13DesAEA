@@ -1,84 +1,206 @@
 @baseUrl = https://localhost:7163
-@clienteId = 1
+@clienteIdConOrdenes = 1
+@clienteIdSinOrdenes = 3
 @ordenId = 1
+@ordenIdParaBorrar = 3
+@tokenCliente = PEGAR_TOKEN_CLIENTE
+@tokenRecepcionista = PEGAR_TOKEN_RECEPCIONISTA
+@tokenMecanico = PEGAR_TOKEN_MECANICO
+@correoRegistro = CORREO_NUEVO_LOCAL
+@claveRegistro = CLAVE_ELEGIDA_LOCAL
+@correoNoRegistrado = CORREO_INEXISTENTE_LOCAL
+@claveIncorrecta = CLAVE_INCORRECTA_LOCAL
+@correoCliente = CORREO_CLIENTE_LOCAL
+@claveCliente = CLAVE_CLIENTE_LOCAL
+@correoRecepcionista = CORREO_RECEPCIONISTA_LOCAL
+@claveRecepcionista = CLAVE_RECEPCIONISTA_LOCAL
+@correoMecanico = CORREO_MECANICO_LOCAL
+@claveMecanico = CLAVE_MECANICO_LOCAL
 
-### Clientes: lista (200)
+# Cree las cuentas en su equipo. El registro asigna Cliente; para personal use el UPDATE del script SQL.
+# No guarde ni suba este archivo con contraseñas o tokens reales.
+
+### Registro público (201). Use un correo nuevo en cada repetición.
+POST {{baseUrl}}/api/auth/registro
+Content-Type: application/json
+
+{ "correo": "{{correoRegistro}}", "clave": "{{claveRegistro}}" }
+
+### Registro duplicado (409)
+POST {{baseUrl}}/api/auth/registro
+Content-Type: application/json
+
+{ "correo": "{{correoRegistro}}", "clave": "{{claveRegistro}}" }
+
+### Contraseña incorrecta (401)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{ "correo": "{{correoCliente}}", "clave": "{{claveIncorrecta}}" }
+
+### Correo inexistente (401, misma respuesta que contraseña incorrecta)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{ "correo": "{{correoNoRegistrado}}", "clave": "{{claveIncorrecta}}" }
+
+### Iniciar sesión como Cliente. Copie el campo token a @tokenCliente para las solicitudes siguientes.
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{ "correo": "{{correoCliente}}", "clave": "{{claveCliente}}" }
+
+### Iniciar sesión como Recepcionista. Copie el campo token a @tokenRecepcionista.
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{ "correo": "{{correoRecepcionista}}", "clave": "{{claveRecepcionista}}" }
+
+### Iniciar sesión como Mecanico. Copie el campo token a @tokenMecanico.
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{ "correo": "{{correoMecanico}}", "clave": "{{claveMecanico}}" }
+
+### Sin token (401)
 GET {{baseUrl}}/api/clientes
 
+### Perfil basado en claims del token (200)
+GET {{baseUrl}}/api/auth/perfil
+Authorization: Bearer {{tokenCliente}}
+
+### Cliente autenticado sin permiso para ver clientes (403)
+GET {{baseUrl}}/api/clientes
+Authorization: Bearer {{tokenCliente}}
+
+### Clientes: listar como Recepcionista (200)
+GET {{baseUrl}}/api/clientes
+Authorization: Bearer {{tokenRecepcionista}}
+
 ### Clientes: detalle (200)
-GET {{baseUrl}}/api/clientes/{{clienteId}}
+GET {{baseUrl}}/api/clientes/{{clienteIdConOrdenes}}
+Authorization: Bearer {{tokenRecepcionista}}
 
-### Clientes: órdenes asociadas (200)
-GET {{baseUrl}}/api/clientes/{{clienteId}}/ordenes
+### Clientes: detalle inexistente (404)
+GET {{baseUrl}}/api/clientes/99999
+Authorization: Bearer {{tokenRecepcionista}}
 
-### Clientes: alta (201 + Location)
+### Clientes: órdenes del cliente (200)
+GET {{baseUrl}}/api/clientes/{{clienteIdConOrdenes}}/ordenes
+Authorization: Bearer {{tokenRecepcionista}}
+
+### Clientes: órdenes para cliente inexistente (404)
+GET {{baseUrl}}/api/clientes/99999/ordenes
+Authorization: Bearer {{tokenRecepcionista}}
+
+### Clientes: crear como Recepcionista (201 y cabecera Location)
 POST {{baseUrl}}/api/clientes
+Authorization: Bearer {{tokenRecepcionista}}
 Content-Type: application/json
 
 { "nombre": "Ana Torres", "telefono": "999111222" }
 
-### Clientes: validación (400)
+### Clientes: validación incorrecta (400)
 POST {{baseUrl}}/api/clientes
+Authorization: Bearer {{tokenRecepcionista}}
 Content-Type: application/json
 
 { "nombre": "", "telefono": "1" }
 
-### Clientes: edición (204)
-PUT {{baseUrl}}/api/clientes/{{clienteId}}
+### Recepcionista sin permiso para actualizar una orden (403)
+PUT {{baseUrl}}/api/ordenesservicio/{{ordenId}}
+Authorization: Bearer {{tokenRecepcionista}}
 Content-Type: application/json
 
-{ "nombre": "María Quispe Rojas", "telefono": "987654321" }
+{ "placa": "ABC-123", "descripcionTrabajo": "Revisión de frenos", "fechaIngreso": "2026-11-10", "estado": "En proceso", "clienteId": 1 }
 
-### Clientes: bloqueo de borrado por órdenes (409)
-DELETE {{baseUrl}}/api/clientes/{{clienteId}}
+### Clientes: actualizar como Recepcionista (204)
+PUT {{baseUrl}}/api/clientes/{{clienteIdConOrdenes}}
+Authorization: Bearer {{tokenRecepcionista}}
+Content-Type: application/json
 
-### Clientes: borrado permitido sin órdenes (204)
-DELETE {{baseUrl}}/api/clientes/3
+{ "nombre": "María Quispe", "telefono": "987654321" }
 
-### Clientes: inexistente (404)
-GET {{baseUrl}}/api/clientes/99999
+### Clientes: actualizar inexistente (404)
+PUT {{baseUrl}}/api/clientes/99999
+Authorization: Bearer {{tokenRecepcionista}}
+Content-Type: application/json
 
-### Órdenes: lista (200)
+{ "nombre": "Cliente inexistente", "telefono": "987654321" }
+
+### No se borra un cliente con órdenes (409)
+DELETE {{baseUrl}}/api/clientes/{{clienteIdConOrdenes}}
+Authorization: Bearer {{tokenRecepcionista}}
+
+### Borrar cliente sin órdenes (204; restablezca los datos con el script si hace falta)
+DELETE {{baseUrl}}/api/clientes/{{clienteIdSinOrdenes}}
+Authorization: Bearer {{tokenRecepcionista}}
+
+### Órdenes: listar como Mecanico (200)
 GET {{baseUrl}}/api/ordenesservicio
+Authorization: Bearer {{tokenMecanico}}
 
-### Órdenes: filtro por estado (200)
+### Órdenes: filtro de estado (200)
 GET {{baseUrl}}/api/ordenesservicio?estado=Pendiente
+Authorization: Bearer {{tokenMecanico}}
 
 ### Órdenes: detalle (200)
 GET {{baseUrl}}/api/ordenesservicio/{{ordenId}}
+Authorization: Bearer {{tokenMecanico}}
 
-### Órdenes: alta (201 + Location)
+### Órdenes: detalle inexistente (404)
+GET {{baseUrl}}/api/ordenesservicio/99999
+Authorization: Bearer {{tokenMecanico}}
+
+### Mecanico sin permiso para crear órdenes (403)
 POST {{baseUrl}}/api/ordenesservicio
+Authorization: Bearer {{tokenMecanico}}
+Content-Type: application/json
+
+{ "placa": "GHT-234", "descripcionTrabajo": "Cambio de aceite", "fechaIngreso": "2026-11-11", "estado": "Pendiente", "clienteId": 2 }
+
+### Órdenes: crear como Recepcionista (201 y cabecera Location)
+POST {{baseUrl}}/api/ordenesservicio
+Authorization: Bearer {{tokenRecepcionista}}
 Content-Type: application/json
 
 { "placa": "GHT-234", "descripcionTrabajo": "Cambio de aceite y filtro", "fechaIngreso": "2026-11-11", "estado": "Pendiente", "clienteId": 2 }
 
-### Órdenes: placa con trabajo pendiente (409)
+### Segunda orden pendiente para la misma placa (409)
 POST {{baseUrl}}/api/ordenesservicio
+Authorization: Bearer {{tokenRecepcionista}}
 Content-Type: application/json
 
 { "placa": "ABC-123", "descripcionTrabajo": "Revisión de frenos", "fechaIngreso": "2026-11-11", "estado": "Pendiente", "clienteId": 2 }
 
-### Órdenes: cliente inexistente (404)
+### Cliente asociado inexistente (404)
 POST {{baseUrl}}/api/ordenesservicio
+Authorization: Bearer {{tokenRecepcionista}}
 Content-Type: application/json
 
 { "placa": "ZZZ-999", "descripcionTrabajo": "Revisión general", "fechaIngreso": "2026-11-11", "estado": "Pendiente", "clienteId": 99999 }
 
-### Órdenes: validación (400)
+### Validación de orden incorrecta (400)
 POST {{baseUrl}}/api/ordenesservicio
+Authorization: Bearer {{tokenRecepcionista}}
 Content-Type: application/json
 
 { "placa": "", "descripcionTrabajo": "", "fechaIngreso": "2026-11-11", "estado": "Pendiente", "clienteId": 0 }
 
-### Órdenes: edición (204)
+### Órdenes: cambiar estado como Mecanico (204)
 PUT {{baseUrl}}/api/ordenesservicio/{{ordenId}}
+Authorization: Bearer {{tokenMecanico}}
 Content-Type: application/json
 
-{ "placa": "ABC-123", "descripcionTrabajo": "Cambio de aceite y filtro premium", "fechaIngreso": "2026-11-10", "estado": "En proceso", "clienteId": 1 }
+{ "placa": "ABC-123", "descripcionTrabajo": "Cambio de aceite y filtro", "fechaIngreso": "2026-11-10", "estado": "En proceso", "clienteId": 1 }
 
-### Órdenes: borrado (204) - usar el id de la orden recién creada
-DELETE {{baseUrl}}/api/ordenesservicio/4
+### Órdenes: actualizar inexistente (404)
+PUT {{baseUrl}}/api/ordenesservicio/99999
+Authorization: Bearer {{tokenMecanico}}
+Content-Type: application/json
 
-### Órdenes: inexistente (404)
-GET {{baseUrl}}/api/ordenesservicio/99999
+{ "placa": "ZZZ-999", "descripcionTrabajo": "Revisión general", "fechaIngreso": "2026-11-11", "estado": "En proceso", "clienteId": 2 }
+
+### Órdenes: borrar como Mecanico (204; vuelva a ejecutar el script para restaurar el ejemplo)
+DELETE {{baseUrl}}/api/ordenesservicio/{{ordenIdParaBorrar}}
+Authorization: Bearer {{tokenMecanico}}

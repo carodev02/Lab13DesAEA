@@ -7,6 +7,7 @@ public partial class TallerMecanicoContext(DbContextOptions<TallerMecanicoContex
 {
     public virtual DbSet<Cliente> Clientes { get; set; }
     public virtual DbSet<OrdenServicio> OrdenesServicio { get; set; }
+    public virtual DbSet<Usuario> Usuarios { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -26,6 +27,16 @@ public partial class TallerMecanicoContext(DbContextOptions<TallerMecanicoContex
                 .HasForeignKey(d => d.ClienteId)
                 .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("FK_OrdenesServicio_Clientes");
+        });
+
+        modelBuilder.Entity<Usuario>(entity =>
+        {
+            entity.ToTable("Usuarios");
+            entity.HasKey(e => e.Id).HasName("PK_Usuarios");
+            entity.HasIndex(e => e.Correo).IsUnique().HasDatabaseName("UQ_Usuarios_Correo");
+            entity.Property(e => e.Correo).HasMaxLength(254).IsRequired();
+            entity.Property(e => e.ClaveHash).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.Rol).HasMaxLength(30).IsRequired();
         });
 
         OnModelCreatingPartial(modelBuilder);
