@@ -1,0 +1,83 @@
+@gateway = http://localhost:5055
+@repuestosDirecto = http://localhost:5056
+@clienteId = 1
+@ordenId = 1
+@repuestoId = 2
+@tokenCliente = PEGAR_TOKEN_CLIENTE
+@tokenRecepcionista = PEGAR_TOKEN_RECEPCIONISTA
+@correoCliente = CORREO_CLIENTE_LOCAL
+@claveCliente = CLAVE_CLIENTE_LOCAL
+@correoRecepcionista = CORREO_RECEPCIONISTA_LOCAL
+@claveRecepcionista = CLAVE_RECEPCIONISTA_LOCAL
+
+### Inicia sesión como Cliente y copia el valor "token" a @tokenCliente.
+POST {{gateway}}/gateway/auth/login
+Content-Type: application/json
+
+{ "correo": "{{correoCliente}}", "clave": "{{claveCliente}}" }
+
+### Login de Recepcionista
+POST {{gateway}}/gateway/auth/login
+Content-Type: application/json
+
+{ "correo": "{{correoRecepcionista}}", "clave": "{{claveRecepcionista}}" }
+
+### Perfil de la cuenta autenticada: 200
+GET {{gateway}}/gateway/auth/perfil
+Authorization: Bearer {{tokenRecepcionista}}
+
+### Repuestos por gateway sin token: 401
+GET {{gateway}}/gateway/repuestos
+
+### Repuestos por gateway: 200
+GET {{gateway}}/gateway/repuestos
+Authorization: Bearer {{tokenRecepcionista}}
+
+### Repuesto por id: 200
+GET {{gateway}}/gateway/repuestos/{{repuestoId}}
+Authorization: Bearer {{tokenRecepcionista}}
+
+### Repuesto inexistente: 404
+GET {{gateway}}/gateway/repuestos/99999
+Authorization: Bearer {{tokenRecepcionista}}
+
+### Servicio 2 llamado directamente sin token: 401 (prueba solicitada por la guía)
+GET {{repuestosDirecto}}/api/repuestos
+
+### Clientes por gateway: 200 (S14 también requiere un token y un rol permitido)
+GET {{gateway}}/gateway/clientes
+Authorization: Bearer {{tokenRecepcionista}}
+
+### Órdenes por gateway: 200
+GET {{gateway}}/gateway/ordenesservicio?estado=Pendiente
+Authorization: Bearer {{tokenRecepcionista}}
+
+### Crear cliente: 201 y Location por gateway
+POST {{gateway}}/gateway/clientes
+Authorization: Bearer {{tokenRecepcionista}}
+Content-Type: application/json
+
+{ "nombre": "Rosa Huamán", "telefono": "987123456" }
+
+### Cliente intenta crear un cliente: 403 (token válido, rol sin permiso)
+POST {{gateway}}/gateway/clientes
+Authorization: Bearer {{tokenCliente}}
+Content-Type: application/json
+
+{ "nombre": "Prueba sin permiso", "telefono": "999000111" }
+
+### Actualizar cliente: 204
+PUT {{gateway}}/gateway/clientes/{{clienteId}}
+Authorization: Bearer {{tokenRecepcionista}}
+Content-Type: application/json
+
+{ "nombre": "Rosa Huamán", "telefono": "987123456" }
+
+### Cliente inexistente: 404
+GET {{gateway}}/gateway/clientes/99999
+Authorization: Bearer {{tokenRecepcionista}}
+
+### Repuesto por gateway sin servicio activo: 502
+# Detén TallerMecanico.Repuestos.Api antes de enviar esta solicitud.
+GET {{gateway}}/gateway/repuestos
+Authorization: Bearer {{tokenRecepcionista}}

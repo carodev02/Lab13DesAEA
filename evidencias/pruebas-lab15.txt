@@ -1,0 +1,24 @@
+# Pruebas locales del laboratorio 15
+
+Ejecutadas: 2026-11-26 (zona horaria de Lima; sin hora consignada)
+Entradas enviadas al gateway local; secretos y tokens no se registran.
+
+OK | Registro temporal de cuenta Cliente por el gateway | esperado 201 | recibido 201
+OK | Inicio de sesión Cliente por el gateway | esperado 200 | recibido 200
+OK | Registro temporal de cuenta Recepcionista | esperado 201 | recibido 201
+OK | Inicio de sesión Recepcionista por el gateway | esperado 200 | recibido 200
+OK | Listado de repuestos autenticado por el gateway | esperado 200 | recibido 200
+OK | Detalle de repuesto por id | esperado 200 | recibido 200
+OK | Repuesto inexistente | esperado 404 | recibido 404
+OK | Consulta S14 sin token, pasando por el gateway | esperado 401 | recibido 401
+OK | Consulta de clientes con rol Recepcionista | esperado 200 | recibido 200
+OK | Consulta de órdenes filtradas por estado | esperado 200 | recibido 200
+OK | Cliente sin permiso intenta crear un cliente | esperado 403 | recibido 403
+OK | Alta de cliente por el gateway | esperado 201 | recibido 201
+OK | Location usa la dirección del gateway | esperado gateway | recibido gateway
+OK | Actualización de cliente por el gateway | esperado 204 | recibido 204
+OK | Cliente inexistente por el gateway | esperado 404 | recibido 404
+OK | Limpieza del cliente temporal | esperado 204 | recibido 204
+OK | Repuestos por gateway sin token | esperado 401 | recibido 401
+OK | Repuestos directo sin token | esperado 401 | recibido 401
+OK | Gateway sin conexión al microservicio 2 | esperado 502 | recibido 502

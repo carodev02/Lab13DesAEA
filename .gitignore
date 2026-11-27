@@ -9,3 +9,4 @@ appsettings.*.json
 !.config/appsettings.template.json
 TestResults/
 *.log
+.tmp_lab15_review/

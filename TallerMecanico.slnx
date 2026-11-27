@@ -1,4 +1,6 @@
 <Solution>
+  <Project Path="GatewayApi/GatewayApi.csproj" />
+  <Project Path="TallerMecanico.Repuestos.Api/TallerMecanico.Repuestos.Api.csproj" />
   <Project Path="TallerMecanico.Api/TallerMecanico.Api.csproj" />
   <Project Path="TallerMecanico.Datos/TallerMecanico.Datos.csproj" />
   <Project Path="TallerMecanico.Entidades/TallerMecanico.Entidades.csproj" />
