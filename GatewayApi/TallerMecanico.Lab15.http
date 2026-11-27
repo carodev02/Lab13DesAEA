@@ -9,6 +9,20 @@
 @claveCliente = CLAVE_CLIENTE_LOCAL
 @correoRecepcionista = CORREO_RECEPCIONISTA_LOCAL
 @claveRecepcionista = CLAVE_RECEPCIONISTA_LOCAL
+@correoRegistro = ximena.lab15.prueba@ejemplo.com
+@claveRegistro = PruebaTaller2026!
+
+### Registro de prueba: 201. Usa un correo nuevo; si ya existe, cambia el correo.
+POST {{gateway}}/gateway/auth/registro
+Content-Type: application/json
+
+{ "correo": "{{correoRegistro}}", "clave": "{{claveRegistro}}" }
+
+### Inicia sesión con la cuenta recién registrada. Copia "token" a @tokenCliente.
+POST {{gateway}}/gateway/auth/login
+Content-Type: application/json
+
+{ "correo": "{{correoRegistro}}", "clave": "{{claveRegistro}}" }
 
 ### Inicia sesión como Cliente y copia el valor "token" a @tokenCliente.
 POST {{gateway}}/gateway/auth/login
